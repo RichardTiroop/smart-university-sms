@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart University Student Management System</title>
+<style>
+:root{--bg:#f6f7fb;--sf:#fff;--tx:#161a33;--mu:#5c6285;--bd:#dde0ee;--pr:#27348b;--pt:#fff;--ac:#fdc300;--ok:#17724a;--okb:#e1f4ea;--wr:#8a5a00;--wrb:#fff1cc;--er:#a32638;--erb:#fde6ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1226;--sf:#181c38;--tx:#eceefc;--mu:#a2a8cc;--bd:#2b3060;--pr:#8e9bff;--pt:#0f1226;--ok:#6fdba5;--okb:#12382a;--wr:#ffd366;--wrb:#3d2f08;--er:#ff9aa8;--erb:#44151d}}
+:root[data-theme="dark"]{--bg:#0f1226;--sf:#181c38;--tx:#eceefc;--mu:#a2a8cc;--bd:#2b3060;--pr:#8e9bff;--pt:#0f1226;--ok:#6fdba5;--okb:#12382a;--wr:#ffd366;--wrb:#3d2f08;--er:#ff9aa8;--erb:#44151d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Georgia,"Times New Roman",serif}
+h1,h2,h3,button,input,select,th,.sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--pr);color:var(--pt);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:4px solid var(--ac)}
+header b{font:600 17px system-ui,sans-serif}
+header span{font-size:14px;opacity:.85}
+main{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:26px;margin:8px 0 4px}h2{font-size:19px;margin:28px 0 10px}
+p.mu,.mu{color:var(--mu)}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:18px}
+.login{max-width:380px;margin:40px auto}
+label{display:block;font:500 14px system-ui,sans-serif;margin:12px 0 4px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font-size:15px}
+button{cursor:pointer;border:0;border-radius:6px;padding:10px 16px;font-size:15px;font-weight:600;background:var(--pr);color:var(--pt)}
+button.ghost{background:transparent;color:inherit;border:1px solid currentColor;padding:6px 12px;font-size:14px}
+button.sm{padding:5px 10px;font-size:13px}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1 1 160px}
+.hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.big{font:700 56px/1 system-ui,sans-serif;color:var(--pr)}
+.bar{height:14px;background:var(--bd);border-radius:7px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--ac)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.stats div{border:1px solid var(--bd);border-radius:6px;padding:10px}
+.stats b{font:700 22px system-ui,sans-serif;display:block}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{font-size:13px;color:var(--mu);font-weight:600}
+.tag{display:inline-block;padding:2px 9px;border-radius:12px;font:600 12.5px system-ui,sans-serif}
+.ok{background:var(--okb);color:var(--ok)}.wr{background:var(--wrb);color:var(--wr)}.er{background:var(--erb);color:var(--er)}
+.msg{margin:10px 0;padding:10px;border-radius:6px;font:14px system-ui,sans-serif}
+.tabs{display:flex;gap:6px;margin:16px 0 0;flex-wrap:wrap}
+.tabs button{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}
+.tabs button[aria-pressed="true"]{background:var(--pr);color:var(--pt);border-color:var(--pr)}
+.note{font-size:13px;color:var(--mu);margin-top:16px}
+</style>
+</head>
+<body>
+<header><div><b>Smart University Student Management System</b><br><span>United States International University-Africa · Academic progress tracker</span></div><div id="who"></div></header>
+<main id="app"></main>
+<script>
+const KEY="susms.v1";
+const seed=()=>({courses:[
+{c:"APT1010",n:"Introduction to Programming",cr:3,pre:[]},
+{c:"APT1020",n:"Discrete Mathematics",cr:3,pre:[]},
+{c:"APT1030",n:"Computer Systems",cr:3,pre:[]},
+{c:"APT2010",n:"Object-Oriented Programming",cr:3,pre:["APT1010"]},
+{c:"APT2020",n:"Data Structures and Algorithms",cr:3,pre:["APT1010","APT1020"]},
+{c:"APT2030",n:"Database Systems",cr:3,pre:["APT1010"]},
+{c:"APT2040",n:"Web Development",cr:3,pre:["APT1010"]},
+{c:"APT3010",n:"Software Engineering",cr:3,pre:["APT2010"]},
+{c:"APT3020",n:"Operating Systems",cr:3,pre:["APT1030","APT2020"]},
+{c:"APT3030",n:"Information Security",cr:3,pre:["APT2030"]},
+{c:"APT4010",n:"Software Testing and Quality",cr:3,pre:["APT3010"]},
+{c:"APT4020",n:"Final Year Project",cr:6,pre:["APT3010","APT2030"]}],
+students:[
+{id:"668923",name:"Richard Tiroop Lolkipayangi",pw:"1234",prog:"BSc Software Engineering",rec:{APT1010:"A",APT1020:"B",APT1030:"B",APT2010:"A",APT2020:"C",APT2030:"B",APT2040:"F"}},
+{id:"668001",name:"Amina Wanjiru",pw:"1234",prog:"BSc Software Engineering",rec:{APT1010:"B",APT1020:"C"}}]});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.courses)S=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let user=null,tab="students",pick="668923",msg="";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const passed=g=>g&&g!=="F";
+const cname=c=>(S.courses.find(x=>x.c===c)||{n:c}).n;
+function progress(st){
+ const done=[],todo=[];
+ S.courses.forEach(co=>{
+  const g=st.rec[co.c];
+  if(passed(g))done.push({...co,g});
+  else{
+   const miss=co.pre.filter(p=>!passed(st.rec[p]));
+   todo.push({...co,g,miss});
+  }});
+ const tot=S.courses.reduce((a,c)=>a+c.cr,0),dc=done.reduce((a,c)=>a+c.cr,0);
+ return {done,todo,tot,dc,pct:tot?Math.round(dc/tot*100):0};
+}
+function view(){
+ $("who").innerHTML=user?`<span>${esc(user.name||"Administrator")}</span> <button class="ghost" onclick="logout()">Log out</button>`:"";
+ if(!user)return login();
+ $("app").innerHTML=user.admin?admin():student(user);
+}
+function login(){
+ $("app").innerHTML=`<div class="card login"><h1>Log in</h1><p class="mu">Check what you have completed, what remains, and what to take first.</p>
+ <label for="u">Student ID or admin username</label><input id="u" autocomplete="username" value="668923">
+ <label for="p">Password</label><input id="p" type="password" autocomplete="current-password" value="1234">
+ <div id="m">${msg}</div><p><button onclick="doLogin()">Log in</button></p>
+ <p class="note">Demo accounts: student 668923 / 1234 · administrator admin / admin123. Data is saved in this browser only.</p></div>`;
+}
+function doLogin(){
+ const u=$("u").value.trim(),p=$("p").value;
+ if(u==="admin"&&p==="admin123"){user={admin:true};pick=S.students[0]?.id;tab="students";msg="";return view()}
+ const st=S.students.find(s=>s.id===u&&s.pw===p);
+ if(!st){$("m").innerHTML='<div class="msg er">Login failed. Check your student ID and password, then try again.</div>';return}
+ user=st;msg="";view();
+}
+function logout(){user=null;msg="";view()}
+function student(st){
+ const r=progress(st);
+ const ready=r.todo.filter(t=>!t.miss.length),blocked=r.todo.filter(t=>t.miss.length);
+ return `<h1>${esc(st.name)}</h1><p class="mu">${esc(st.prog)} · ID ${esc(st.id)}</p>
+ <div class="card"><div class="hero"><div class="big">${r.pct}%</div><div style="flex:1;min-width:200px"><b class="sans">Programme completion</b>
+ <div class="bar" role="progressbar" aria-valuenow="${r.pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${r.pct}%"></i></div>
+ <span class="mu">${r.dc} of ${r.tot} credit hours completed</span></div></div>
+ <div class="stats"><div><b>${r.done.length}</b>Completed</div><div><b>${r.todo.length}</b>Outstanding</div><div><b>${ready.length}</b>Ready to register</div><div><b>${blocked.length}</b>Blocked by prerequisites</div></div></div>
+ <h2>Outstanding courses</h2><div class="card scroll">${r.todo.length?`<table><tr><th>Code</th><th>Course</th><th>Credits</th><th>Prerequisites</th><th>Status</th></tr>${r.todo.map(t=>`<tr><td>${t.c}</td><td>${esc(t.n)}${t.g==="F"?' <span class="tag er">Failed: retake</span>':""}</td><td>${t.cr}</td><td>${t.pre.length?t.pre.map(p=>`${p} ${passed(st.rec[p])?"✓":"✗"}`).join(", "):"None"}</td><td>${t.miss.length?`<span class="tag wr">Complete ${t.miss.join(", ")} first</span>`:'<span class="tag ok">Ready to register</span>'}</td></tr>`).join("")}</table>`:"<p>Every programme requirement is complete.</p>"}</div>
+ <h2>Completed courses</h2><div class="card scroll">${r.done.length?`<table><tr><th>Code</th><th>Course</th><th>Credits</th><th>Grade</th></tr>${r.done.map(d=>`<tr><td>${d.c}</td><td>${esc(d.n)}</td><td>${d.cr}</td><td><span class="tag ok">${d.g}</span></td></tr>`).join("")}</table>`:"<p>No completed courses yet.</p>"}</div>
+ <p class="note">This view supports planning and does not replace your academic advisor.</p>`;
+}
+function admin(){
+ const st=S.students.find(s=>s.id===pick)||S.students[0];
+ const T=(k,l)=>`<button aria-pressed="${tab===k}" onclick="tab='${k}';msg='';view()">${l}</button>`;
+ let body="";
+ if(tab==="students"){
+  const opts=S.students.map(s=>`<option value="${s.id}" ${s.id===pick?"selected":""}>${esc(s.name)} (${s.id})</option>`).join("");
+  const recs=st?S.courses.filter(c=>st.rec[c.c]).map(c=>`<tr><td>${c.c}</td><td>${esc(c.n)}</td><td>${st.rec[c.c]}</td><td><button class="ghost sm" onclick="delRec('${c.c}')">Remove</button></td></tr>`).join(""):"";
+  const r=st?progress(st):{pct:0};
+  body=`<div class="card"><label for="sp">Student</label><select id="sp" onchange="pick=this.value;view()">${opts}</select>
+  <p class="mu">Progress: <b>${r.pct}%</b></p>
+  <div class="row"><div><label for="gc">Course</label><select id="gc">${S.courses.map(c=>`<option value="${c.c}">${c.c} ${esc(c.n)}</option>`).join("")}</select></div>
+  <div><label for="gg">Grade</label><select id="gg">${["A","B","C","D","F"].map(g=>`<option>${g}</option>`).join("")}</select></div></div>
+  <p><button onclick="setRec()">Save grade</button></p>${msg}</div>
+  <h2>Academic records</h2><div class="card scroll">${recs?`<table><tr><th>Code</th><th>Course</th><th>Grade</th><th></th></tr>${recs}</table>`:"<p>No records yet. Save a grade above.</p>"}</div>
+  <h2>Add student</h2><div class="card"><div class="row"><div><label for="ni">Student ID</label><input id="ni"></div><div><label for="nn">Full name</label><input id="nn"></div></div><p><button onclick="addStu()">Add student</button></p><p class="note">New students get password 1234 and the BSc Software Engineering programme.</p></div>`;
+ }else{
+  body=`<div class="card scroll"><table><tr><th>Code</th><th>Course</th><th>Credits</th><th>Prerequisites</th><th></th></tr>${S.courses.map(c=>`<tr><td>${c.c}</td><td>${esc(c.n)}</td><td>${c.cr}</td><td>${c.pre.join(", ")||"None"}</td><td><button class="ghost sm" onclick="delCourse('${c.c}')">Remove</button></td></tr>`).join("")}</table></div>
+  <h2>Add course</h2><div class="card"><div class="row"><div><label for="cc">Code</label><input id="cc"></div><div><label for="cn">Course name</label><input id="cn"></div><div><label for="ck">Credits</label><input id="ck" type="number" value="3" min="1" max="9"></div></div>
+  <label for="cp">Prerequisites (hold Ctrl or Cmd to select several)</label><select id="cp" multiple size="5">${S.courses.map(c=>`<option value="${c.c}">${c.c} ${esc(c.n)}</option>`).join("")}</select>
+  <p><button onclick="addCourse()">Add course</button></p>${msg}</div>`;
+ }
+ return `<h1>Administrator</h1><p class="mu">Manage students, grades, courses and prerequisites.</p><div class="tabs">${T("students","Students and grades")}${T("courses","Courses and prerequisites")}</div><div style="margin-top:14px">${body}</div>
+ <p><button class="ghost" onclick="if(confirm('Reset all demo data?')){S=seed();save();view()}">Reset demo data</button></p>`;
+}
+function setRec(){const st=S.students.find(s=>s.id===pick);if(!st)return;st.rec[$("gc").value]=$("gg").value;save();msg='<div class="msg ok">Grade saved.</div>';view()}
+function delRec(c){const st=S.students.find(s=>s.id===pick);delete st.rec[c];save();view()}
+function addStu(){const id=$("ni").value.trim(),n=$("nn").value.trim();
+ if(!id||!n||S.students.some(s=>s.id===id)){alert("Enter a unique student ID and a full name.");return}
+ S.students.push({id,name:n,pw:"1234",prog:"BSc Software Engineering",rec:{}});pick=id;save();view()}
+function addCourse(){const c=$("cc").value.trim().toUpperCase(),n=$("cn").value.trim();
+ if(!c||!n||S.courses.some(x=>x.c===c)){msg='<div class="msg er">Enter a unique course code and a course name.</div>';return view()}
+ S.courses.push({c,n,cr:+$("ck").value||3,pre:[...$("cp").selectedOptions].map(o=>o.value)});save();msg='<div class="msg ok">Course added.</div>';view()}
+function delCourse(c){if(!confirm("Remove "+c+"? It will also be removed from prerequisites."))return;
+ S.courses=S.courses.filter(x=>x.c!==c);S.courses.forEach(x=>x.pre=x.pre.filter(p=>p!==c));S.students.forEach(s=>delete s.rec[c]);save();view()}
+view();
+</script>
+</body>
+</html>
